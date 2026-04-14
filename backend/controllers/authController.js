@@ -3,7 +3,12 @@ import generateToken from '../utils/generateToken.js'
 
 const registerUser = async (req, res) => {
     try {
+        console.log('REGISTER BODY:', req.body);
         const { name, email, password } = req.body;
+
+        if (!name || !email || !password) {
+            return res.status(400).json({ message: 'All fields are required' });
+        }
 
         // Check if user already exists
         const userExists = await User.findOne({ email });
@@ -20,7 +25,7 @@ const registerUser = async (req, res) => {
         });
 
         if (user) {
-            res.status(201).json({
+            return res.status(201).json({
                 _id: user._id,
                 name: user.name,
                 email: user.email,
@@ -28,7 +33,12 @@ const registerUser = async (req, res) => {
                 token: generateToken(user._id),
             });
         }
+
+        return res.status(400).json({ message: 'Unable to create user' });
     } catch (error) {
+        if (error.code === 11000) {
+            return res.status(400).json({ message: 'Email already exists' });
+        }
         res.status(500).json({ message: error.message });
     }
 };

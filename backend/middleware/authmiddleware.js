@@ -14,20 +14,24 @@ const protect = async (req, res, next) => {
             // Extract token from "Bearer <token>"
             token = req.headers.authorization.split(' ')[1];
 
+            if (!process.env.JWT_SECRET) {
+                throw new Error('JWT_SECRET not defined');
+            }
+
             // Verify token
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
             // Attach user to request (excluding password)
             req.user = await User.findById(decoded.id).select('-password');
 
-            next(); // move to next middleware/route
+            return next(); // move to next middleware/route
         } catch (error) {
-            res.status(401).json({ message: 'Not authorized, token failed' });
+            return res.status(401).json({ message: 'Not authorized, token failed' });
         }
     }
 
     if (!token) {
-        res.status(401).json({ message: 'Not authorized, no token' });
+        return res.status(401).json({ message: 'Not authorized, no token' });
     }
 };
 

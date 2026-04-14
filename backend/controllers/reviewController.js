@@ -29,6 +29,10 @@ export const addReview = async (req, res) => {
 
     res.status(201).json(review);
   } catch (error) {
+    if (error.code === 11000) {
+      return res.status(400).json({ message: 'Already reviewed' });
+    }
+
     res.status(500).json({ message: error.message });
   }
 };
@@ -91,7 +95,7 @@ export const updateReview = async (req, res) => {
       return res.status(401).json({ message: 'Not authorized' });
     }
 
-    review.rating  = req.body.rating  || review.rating;
+    review.rating = req.body.rating || review.rating;
     review.comment = req.body.comment || review.comment;
 
     const updatedReview = await review.save();

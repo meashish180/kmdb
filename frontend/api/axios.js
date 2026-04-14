@@ -1,7 +1,8 @@
 import axios from 'axios';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL?.replace(/\/$/, '') || '';
 const API = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: `${API_BASE_URL}/api`,
 });
 
 // Automatically attach token to every request

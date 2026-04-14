@@ -14,7 +14,8 @@ const startServer = async () => {
 
        
         app.use(cors({
-            origin: 'http://localhost:5173',
+            origin: ['http://localhost:5173',
+            'kmdb-git-main-meashish180s-projects.vercel.app'],
             credentials: true,
         }));
          app.use(express.json());
